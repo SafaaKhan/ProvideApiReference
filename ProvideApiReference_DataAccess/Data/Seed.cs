@@ -1,4 +1,4 @@
-﻿using ProvideApiReference_Models;
+﻿using ProvideApiReference_Models.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
