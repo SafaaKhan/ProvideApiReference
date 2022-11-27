@@ -1,4 +1,5 @@
 ﻿using ProvideApiReference_DataAccess.Data;
+using ProvideApiReference_Models.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ProvideApiReference_DataAccess.Repositroy
 {
-    public class Repository : IRepository.IRepository
+    public class Repository : ResponseModel, IRepository.IRepository
     {
         private readonly ApplicationDbContext _db;
 
@@ -18,7 +19,7 @@ namespace ProvideApiReference_DataAccess.Repositroy
 
         public async Task<bool> SaveAllAsync()
         {
-            return await _db.SaveChangesAsync()>0;
+            return await _db.SaveChangesAsync() > 0;
         }
     }
 }

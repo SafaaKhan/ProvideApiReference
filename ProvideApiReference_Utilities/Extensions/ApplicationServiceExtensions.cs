@@ -1,5 +1,6 @@
 ﻿
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,8 @@ namespace ProvideApiReference_Utilities.Extensions
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped<IActivityRepository, ActivityRepository>();
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+
+           
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();

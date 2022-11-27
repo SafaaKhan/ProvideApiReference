@@ -4,6 +4,8 @@ using ProvideApiReference_DataAccess.Data;
 using ProvideApiReference_DataAccess.Repositroy.IRepository;
 using ProvideApiReference_Models.DTOs;
 using ProvideApiReference_Models.Models;
+using ProvideApiReference_Models.ValidateModelAttributes;
+using ProvideApiReference_Utilities.Helpers;
 
 namespace ProvideApiReference.Controllers
 {
@@ -19,63 +21,41 @@ namespace ProvideApiReference.Controllers
         }
 
         [HttpGet]
-        public async Task<object> GetActivities()
+        public async Task<IActionResult> GetActivities()
         {
-            try
-            {
-                IEnumerable<ActivityDto> activityDtos= await _activityRepo.GetActivitiesAsync();
-                _responseDto.Result = activityDtos;
-            }
-            catch(Exception ex)
-            {
-                _responseDto.IsSeccuss = false;
-                _responseDto.ErrorMessages = new List<string>() { ex.ToString() };
-            }
-            return _responseDto;
+            return Ok(await _activityRepo.GetActivitiesAsync());
         }
 
+        //here
         [HttpGet("{id}")]
-        public async Task<object> GetActivityById(Guid id)
-        {
-            var activityDto = await _activityRepo.GetActivityByIdAsync(id);
-            if (activityDto == null)
-            {
-                _responseDto.IsSeccuss = false;
-                _responseDto.ErrorMessages = new List<string>(){ "activiy object was not found"};
-            }
-            _responseDto.Result = activityDto;
-            return _responseDto;
+        public async Task<IActionResult> GetActivityById(Guid id)
+        {  
+           return Ok(await _activityRepo.GetActivityByIdAsync(id));
         }
+
+       
 
         [HttpPost]
-        public async Task<object> AddActivity(PostActivityDto activity)
+        [ValidateModel]
+        public async Task<IActionResult> AddActivity(PostActivityDto activity)
         {
-            try
-            {
-               ActivityDto activityDto = await _activityRepo.AddActivityAsync(activity);
-                _responseDto.Result = activityDto;
-            }
-            catch (Exception ex)
-            {
-                _responseDto.IsSeccuss = false;
-                _responseDto.ErrorMessages = new List<string>() { ex.ToString() };
-            }
-            return _responseDto;
+            return Ok(await _activityRepo.AddActivityAsync(activity));
         }
             
 
 
         [HttpPut]
-        public async Task<ActionResult<ActivityDto>> UpdateActivity(ActivityDto activity)//global handling errors
+        [ValidateModel]
+        public async Task<IActionResult> UpdateActivity(ActivityDto activity)//global handling errors
             //for any exception happened + if id was wrong for example, handlign other errors
         {
-            return await _activityRepo.UpdateActivityAsync(activity);
+            return Ok(await _activityRepo.UpdateActivityAsync(activity));
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteActivty(Guid id)
+        public async Task<IActionResult> DeleteActivty(Guid id)
         {
-            return await _activityRepo.DeleteActivityAsync(id);
+            return Ok(await _activityRepo.DeleteActivityAsync(id));
         }
     }
 }
