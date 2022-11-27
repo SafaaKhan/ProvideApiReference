@@ -1,4 +1,5 @@
-﻿using ProvideApiReference_Models.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using ProvideApiReference_Models.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,24 @@ namespace ProvideApiReference_DataAccess.Data
 {
     public class Seed
     {
-        public static async Task SeedDataAsync(ApplicationDbContext db)
+        public static async Task SeedDataAsync(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
+            if (!userManager.Users.Any())
+            {
+                var users = new List<ApplicationUser>()
+                {
+                    new ApplicationUser{DisplayName="Bob",UserName="Bob", Email="Bob@hotmail.com"},
+                    new ApplicationUser{DisplayName="Tom",UserName="Tom", Email="Tom@hotmail.com"},
+                    new ApplicationUser{DisplayName="Jane",UserName="Jane", Email="Jane@hotmail.com"}
+                };
+
+                foreach(var user in users)
+                {
+                   await userManager.CreateAsync(user, "Bb@34bob");
+                }
+            }
+
+
             if (db.Activities.Any()) return;
 
             var activities = new List<Activity>

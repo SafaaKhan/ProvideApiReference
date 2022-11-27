@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProvideApiReference_DataAccess.Data;
 using ProvideApiReference_DataAccess.Repositroy.IRepository;
@@ -12,12 +13,10 @@ namespace ProvideApiReference.Controllers
     public class ActivitesController : BaseApiController
     {
         private readonly IActivityRepository _activityRepo;
-        protected ResponseDto _responseDto { get; set; }
 
         public ActivitesController(IActivityRepository activityRepo)
         {
             _activityRepo = activityRepo;
-            _responseDto = new ResponseDto();
         }
 
         [HttpGet]
@@ -26,7 +25,7 @@ namespace ProvideApiReference.Controllers
             return Ok(await _activityRepo.GetActivitiesAsync());
         }
 
-        //here
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetActivityById(Guid id)
         {  

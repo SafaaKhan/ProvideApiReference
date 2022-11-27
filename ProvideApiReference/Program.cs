@@ -1,8 +1,11 @@
 
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using ProvideApiReference_DataAccess.DbInitializer;
 using ProvideApiReference_Models.ValidateModelAttributes;
 using ProvideApiReference_Utilities.Extensions;
 using ProvideApiReference_Utilities.Helpers.ExceptionsHandling;
+using System.Net;
 using System.Net.Mime;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
+builder.Services.AddControllers(opt =>
+{
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    opt.Filters.Add(new AuthorizeFilter(policy));
+}).ConfigureApiBehaviorOptions(options =>
 {
     options.InvalidModelStateResponseFactory = context =>
     {
@@ -23,6 +30,7 @@ builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 
 //Extensions
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -39,6 +47,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 SeedDatabase();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

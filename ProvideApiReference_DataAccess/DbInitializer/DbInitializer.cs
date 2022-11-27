@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ProvideApiReference_DataAccess.Data;
+using ProvideApiReference_Models.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +15,13 @@ namespace ProvideApiReference_DataAccess.DbInitializer
     {
         private readonly ApplicationDbContext _db;
         private readonly ILogger<DbInitializer> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DbInitializer(ApplicationDbContext db, ILogger<DbInitializer> logger)
+        public DbInitializer(ApplicationDbContext db, ILogger<DbInitializer> logger,UserManager<ApplicationUser> userManager)
         {
             _db = db;
            _logger = logger;
+            _userManager = userManager;
         }
         public async Task Initialize()
         {
@@ -28,7 +32,7 @@ namespace ProvideApiReference_DataAccess.DbInitializer
                 {
                     _db.Database.Migrate();
                 }
-                await Seed.SeedDataAsync(_db);
+                await Seed.SeedDataAsync(_db,_userManager);
             }
             catch(Exception ex)
             {
