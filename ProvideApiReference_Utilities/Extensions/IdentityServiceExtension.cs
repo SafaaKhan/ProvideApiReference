@@ -21,10 +21,12 @@ namespace ProvideApiReference_Utilities.Extensions
         {
             services.AddIdentityCore<ApplicationUser>(opt =>
             {
-                opt.Password.RequiredLength = 6;
+              //  opt.Password.RequiredLength = 6;
+               // opt.Password.RequireNonAlphanumeric = false;
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddSignInManager<SignInManager<ApplicationUser>>();
+                .AddSignInManager<SignInManager<ApplicationUser>>()
+                .AddDefaultTokenProviders(); ;
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

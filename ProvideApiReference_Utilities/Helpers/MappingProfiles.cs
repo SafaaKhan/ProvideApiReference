@@ -16,6 +16,8 @@ namespace ProvideApiReference_Utilities.Helpers
             CreateMap<Activity,ActivityDto>().ReverseMap();
             CreateMap<Activity,PostActivityDto>().ReverseMap();
             CreateMap<ApplicationUser,UserDto>().ReverseMap();
+            CreateMap<RegisterDto,UserDto>().ReverseMap();
+            CreateMap<ApplicationUser,RegisterDto>().ReverseMap();
         }
 
     }
