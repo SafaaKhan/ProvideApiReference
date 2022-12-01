@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using ProvideApiReference_DataAccess.Data;
 using ProvideApiReference_DataAccess.Repositroy.IRepository;
@@ -60,20 +61,21 @@ namespace ProvideApiReference_DataAccess.Repositroy
 
         public async Task<ResponseModel> GetActivitiesAsync()
         {
-            var activities = await _db.Activities.ToListAsync();
-            return ResponseModel.Seccuss(_mapper.Map<IList<ActivityDto>>(activities),"");
+            var activities = await _db.Activities.
+                ProjectTo<ActivityDto>(_mapper.ConfigurationProvider).ToListAsync();
+            return ResponseModel.Seccuss(activities, "");
         }
 
         //here
         public async Task<ResponseModel> GetActivityByIdAsync(Guid Id)
         {
-            var activity = await _db.Activities.FindAsync(Id);
-            if (activity == null)
+            var activity = await _db.Activities.Where(x=>x.Id==Id).
+                ProjectTo<ActivityDto>(_mapper.ConfigurationProvider).ToListAsync();
+            if (activity.Count==0)
             {
                 return ResponseModel.Failure("The activity object was not found", 404);
             }
-            var activityDto = _mapper.Map<ActivityDto>(activity);
-            return ResponseModel.Seccuss(activityDto,"");
+            return ResponseModel.Seccuss(activity, "");
         }
 
         public async Task<ResponseModel> UpdateActivityAsync(ActivityDto activityDto)
