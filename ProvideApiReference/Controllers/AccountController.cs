@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProvideApiReference_Models;
 using ProvideApiReference_Models.DTOs;
 using ProvideApiReference_Models.Helpers;
 using ProvideApiReference_Models.Models;
@@ -41,9 +42,7 @@ namespace ProvideApiReference.Controllers
 
             if (result.Succeeded)
             {
-                var userDto = _mapper.Map<UserDto>(user);
-                userDto.Token = _tokenService.CreateToken(user);
-                return Ok(ResponseModel.Seccuss(CreateUserObject(user), ""));
+                return Ok(ResponseModel.Seccuss(await CreateUserObject(user), ""));
             }
 
             return Ok(ResponseModel.Failure("Unauthorized user", 401));
@@ -64,10 +63,13 @@ namespace ProvideApiReference.Controllers
             var user=_mapper.Map<ApplicationUser>(registerDto);
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
-            if (result.Succeeded)
+            var roleResult = await _userManager.AddToRoleAsync(user, SD.MemberRole);
+
+            if (result.Succeeded && roleResult.Succeeded)
             {
-                return Ok(ResponseModel.Seccuss(CreateUserObject(user), "Registration successful"));
+                return Ok(ResponseModel.Seccuss(await CreateUserObject(user), "Registration successful"));
             }
+
             return Ok(ResponseModel.Failure("Failur in the registeration process", 400));
         }
 
@@ -77,13 +79,13 @@ namespace ProvideApiReference.Controllers
         {
             var user = await _userManager.FindByIdAsync( User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            return Ok(ResponseModel.Seccuss(CreateUserObject(user), "Registration successful"));
+            return Ok(ResponseModel.Seccuss(await CreateUserObject(user), "Registration successful"));
         }
 
-        private UserDto CreateUserObject(ApplicationUser user)
+        private async Task<UserDto> CreateUserObject(ApplicationUser user)
         {
             var userDto = _mapper.Map<UserDto>(user);
-            userDto.Token = _tokenService.CreateToken(user);
+            userDto.Token = await _tokenService.CreateToken(user);
             return userDto;
         }
     }

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using ProvideApiReference_Models;
 using ProvideApiReference_Models.Models;
 using System;
 using System.Collections.Generic;
@@ -10,24 +12,59 @@ namespace ProvideApiReference_DataAccess.Data
 {
     public class Seed
     {
-        public static async Task SeedDataAsync(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
+        public static async Task SeedDataAsync(ApplicationDbContext db, 
+            UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager)
         {
             if (!userManager.Users.Any())
             {
-                var users = new List<ApplicationUser>()
+                //create roles if they are not created
+
+                    await roleManager.CreateAsync(new ApplicationRole { Name = SD.AdminRole });
+                    await roleManager.CreateAsync(new ApplicationRole { Name = SD.ModeratorRole });
+                    await roleManager.CreateAsync(new ApplicationRole { Name = SD.MemberRole });
+
+
+                var adminUser = new ApplicationUser
                 {
-                    new ApplicationUser{DisplayName="Bob",UserName="Bob", Email="Bob@hotmail.com"},
-                    new ApplicationUser{DisplayName="Tom",UserName="Tom", Email="Tom@hotmail.com"},
-                    new ApplicationUser{DisplayName="Jane",UserName="Jane", Email="Jane@hotmail.com"}
+                    DisplayName = "AdminUser",
+                    UserName = "AdminUser",
+                    Email = "AdminUser@gmail.com"
                 };
 
+                await userManager.CreateAsync(adminUser, "adminUser@123");
+                await userManager.AddToRolesAsync(adminUser, new[] { SD.AdminRole, SD.ModeratorRole });
+
+                var moderatorUser = new ApplicationUser
+                {
+                    DisplayName = "moderatorUser",
+                    UserName = "moderatorUser",
+                    Email = "moderatorUser@gmail.com"
+                };
+
+                await userManager.CreateAsync(moderatorUser, "adminUser@123");
+                await userManager.AddToRoleAsync(moderatorUser,  SD.ModeratorRole );
+
+                var users = new List<ApplicationUser>
+                {
+                    new ApplicationUser { DisplayName = "Bob", UserName = "Bob", Email = "Bob@hotmail.com" },
+                    new ApplicationUser { DisplayName = "Tom", UserName = "Tom", Email = "Tom@hotmail.com" },
+                    new ApplicationUser { DisplayName = "Jane", UserName = "Jane", Email = "Jane@hotmail.com" },
+
+                };
+                
                 foreach(var user in users)
                 {
-                   await userManager.CreateAsync(user, "Bb@34bob");
+                    await userManager.CreateAsync(user, "Test@12test");
+                    await userManager.AddToRoleAsync(user, SD.MemberRole);
                 }
+
+
             }
 
 
+
+            //if roles are not created, we will create the admin role as well
             if (db.Activities.Any()) return;
 
             var activities = new List<Activity>

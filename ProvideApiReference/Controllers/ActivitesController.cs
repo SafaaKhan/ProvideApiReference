@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProvideApiReference_DataAccess.Data;
 using ProvideApiReference_DataAccess.Repositroy.IRepository;
+using ProvideApiReference_Models;
 using ProvideApiReference_Models.DTOs;
 using ProvideApiReference_Models.Models;
 using ProvideApiReference_Models.ValidateModelAttributes;

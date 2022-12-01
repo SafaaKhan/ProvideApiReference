@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using ProvideApiReference_Models.Models;
 using System;
@@ -14,12 +15,14 @@ namespace ProvideApiReference_Utilities.Services
     public class TokenService
     {
         private readonly IConfiguration _config;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TokenService(IConfiguration config)
+        public TokenService(IConfiguration config, UserManager<ApplicationUser> userManager)
         {
             _config = config;
+           _userManager = userManager;
         }
-        public string CreateToken(ApplicationUser user)
+        public async Task<string> CreateToken(ApplicationUser user)
         {
             var claims = new List<Claim>
             {
@@ -27,6 +30,10 @@ namespace ProvideApiReference_Utilities.Services
                 new Claim(ClaimTypes.Email,user.Email),
                 new Claim(ClaimTypes.NameIdentifier,user.Id)
             };
+
+            var roles=await _userManager.GetRolesAsync(user);
+            claims.AddRange(roles.Select(role=> new Claim(ClaimTypes.Role,role)));
+
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
