@@ -9,6 +9,7 @@ namespace ProvideApiReference_Models.DTOs
 {
     public class ActivityDto
     {
+        [Required]
         public Guid Id { get; set; }
         [Required]
         public string Title { get; set; } = string.Empty;

@@ -11,6 +11,7 @@ using ProvideApiReference_Utilities.Helpers;
 
 namespace ProvideApiReference.Controllers
 {
+
     public class ActivitesController : BaseApiController
     {
         private readonly IActivityRepository _activityRepo;
@@ -20,6 +21,8 @@ namespace ProvideApiReference.Controllers
             _activityRepo = activityRepo;
         }
 
+
+        
         [HttpGet]
         public async Task<IActionResult> GetActivities()
         {
